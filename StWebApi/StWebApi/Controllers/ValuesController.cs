@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace StWebApi.Controllers
 {
@@ -10,11 +11,23 @@ namespace StWebApi.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private IConfiguration configuration;
+
+        public ValuesController(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var authors = configuration.GetValue<string>("Authors");
+            return authors?
+                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)?
+                .Where(a => !string.IsNullOrWhiteSpace(a))
+                .Select(a => a.Trim())
+                .ToArray();
         }
 
         // GET api/values/5
