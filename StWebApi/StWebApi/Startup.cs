@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -26,6 +28,7 @@ namespace StWebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddTransient<IDbConnection>(sp => new SqlConnection(Configuration.GetConnectionString("CoeusDevDb")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
