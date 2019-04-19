@@ -35,7 +35,7 @@ namespace StWebApi
                 options.AddPolicy(MyAllowSpecificOrigin,
                     builder =>
                     {
-                        builder.WithOrigins("https://coeusdev.azurewebsites.net/").AllowAnyHeader().AllowAnyMethod();
+                        builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
                     });
             });
         }
