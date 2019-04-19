@@ -17,6 +17,7 @@ namespace StWebApi
 {
     public class Startup
     {
+        private readonly string MyAllowSpecificOrigin = "_myAllowSpecificOrigin";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,6 +30,14 @@ namespace StWebApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddTransient<IDbConnection>(sp => new SqlConnection(Configuration.GetConnectionString("CoeusDevDb")));
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigin,
+                    builder =>
+                    {
+                        builder.WithOrigins("https://coeusdev.azurewebsites.net/").AllowAnyHeader().AllowAnyMethod();
+                    });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +53,7 @@ namespace StWebApi
                 app.UseHsts();
             }
 
+            app.UseCors(MyAllowSpecificOrigin);
             app.UseHttpsRedirection();
             app.UseMvc();
         }
