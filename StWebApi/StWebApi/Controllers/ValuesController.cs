@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
@@ -12,22 +14,21 @@ namespace StWebApi.Controllers
     public class ValuesController : ControllerBase
     {
         private IConfiguration configuration;
+        private IDbConnection connection;
 
-        public ValuesController(IConfiguration configuration)
+        public ValuesController(IConfiguration configuration, IDbConnection connection)
         {
             this.configuration = configuration;
+            this.connection = connection;
         }
 
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<IEnumerable<Pocos.UserAccount>> Get()
         {
-            var authors = configuration.GetValue<string>("Authors");
-            return authors?
-                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)?
-                .Where(a => !string.IsNullOrWhiteSpace(a))
-                .Select(a => a.Trim())
-                .ToArray();
+            var query = "SELECT * FROM UserAccount";
+            var userAccounts = connection.Query<Pocos.UserAccount>(query);
+            return userAccounts.ToArray();
         }
 
         // GET api/values/5
